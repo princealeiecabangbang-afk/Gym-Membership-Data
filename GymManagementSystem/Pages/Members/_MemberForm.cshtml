@@ -1,0 +1,67 @@
+@model GymManagementSystem.Pages.Members.MemberFormModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+@if (Model.Plans.Count == 0)
+{
+    <div class="alert alert-warning" role="alert">
+        There are no active Membership Plans. Create an active plan before adding a member.
+    </div>
+}
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="Input.FirstName" class="form-label">First name <span class="text-danger">*</span></label>
+        <input asp-for="Input.FirstName" class="form-control" autocomplete="given-name" />
+        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Input.LastName" class="form-label">Last name <span class="text-danger">*</span></label>
+        <input asp-for="Input.LastName" class="form-control" autocomplete="family-name" />
+        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Input.Email" class="form-label">Email <span class="text-danger">*</span></label>
+        <input asp-for="Input.Email" class="form-control" type="email" autocomplete="email" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Input.Phone" class="form-label">Phone number <span class="text-secondary">(optional)</span></label>
+        <input asp-for="Input.Phone" class="form-control" type="tel" autocomplete="tel" />
+        <span asp-validation-for="Input.Phone" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Input.DateOfBirth" class="form-label">Date of birth <span class="text-secondary">(optional)</span></label>
+        <input asp-for="Input.DateOfBirth" class="form-control" type="date" />
+        <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Input.Gender" class="form-label">Gender <span class="text-secondary">(optional)</span></label>
+        <select asp-for="Input.Gender" class="form-select">
+            <option value="">Not specified</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+        <span asp-validation-for="Input.Gender" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Input.PlanId" class="form-label">Membership plan <span class="text-danger">*</span></label>
+        <select asp-for="Input.PlanId" class="form-select">
+            <option value="0">Select a plan</option>
+            @foreach (var plan in Model.Plans)
+            {
+                <option value="@plan.PlanId">@plan.PlanName (@plan.Price.ToString("0.00"))</option>
+            }
+        </select>
+        <span asp-validation-for="Input.PlanId" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Input.Status" class="form-label">Status</label>
+        <select asp-for="Input.Status" class="form-select">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="suspended">Suspended</option>
+            <option value="cancelled">Cancelled</option>
+        </select>
+        <span asp-validation-for="Input.Status" class="text-danger"></span>
+    </div>
+</div>

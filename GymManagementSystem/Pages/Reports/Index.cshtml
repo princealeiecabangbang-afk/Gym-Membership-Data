@@ -1,0 +1,281 @@
+@page
+@model GymManagementSystem.Pages.Reports.IndexModel
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h1 class="h2 mb-1">Reports</h1>
+        <p class="text-secondary mb-0">Review gym activity for a Philippine-local date range.</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="/Index">Back to Dashboard</a>
+</div>
+
+<form method="get" class="card card-body mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-sm-5 col-lg-3">
+            <label asp-for="StartDate" class="form-label">Start Date</label>
+            <input asp-for="StartDate" type="date" class="form-control" />
+        </div>
+        <div class="col-sm-5 col-lg-3">
+            <label asp-for="EndDate" class="form-label">End Date</label>
+            <input asp-for="EndDate" type="date" class="form-control" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a class="btn btn-outline-secondary" asp-page="./Index">Clear Filters</a>
+        </div>
+    </div>
+</form>
+
+@if (Model.DateRangeError is not null)
+{
+    <div class="alert alert-danger" role="alert">@Model.DateRangeError</div>
+}
+else
+{
+    <p class="small text-secondary mb-4">
+        Report period: <strong>@Model.StartDate?.ToString("MMM d, yyyy")</strong> through
+        <strong>@Model.EndDate?.ToString("MMM d, yyyy")</strong>
+    </p>
+
+    <section class="mb-5" aria-labelledby="payment-report-heading">
+        <h2 id="payment-report-heading" class="h4 mb-3">Payment Report</h2>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-4">
+                <div class="card dashboard-stat-card h-100"><div class="card-body">
+                    <div class="text-secondary small">Payments in period</div>
+                    <div class="display-6 fw-semibold">@Model.PaymentCount</div>
+                </div></div>
+            </div>
+            <div class="col-6 col-lg-4">
+                <div class="card dashboard-stat-card h-100"><div class="card-body">
+                    <div class="text-secondary small">Collected revenue (Paid)</div>
+                    <div class="h3 fw-semibold mb-0">₱@Model.CollectedRevenue.ToString("N2")</div>
+                </div></div>
+            </div>
+            <div class="col-6 col-lg-4">
+                <div class="card dashboard-stat-card h-100"><div class="card-body">
+                    <div class="text-secondary small">Pending amount</div>
+                    <div class="h3 fw-semibold mb-0">₱@Model.PendingAmount.ToString("N2")</div>
+                </div></div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white"><h3 class="h5 mb-0">Payments by Status</h3></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light"><tr><th>Status</th><th>Payments</th><th class="text-end">Amount</th></tr></thead>
+                            <tbody>
+                            @if (Model.PaymentStatuses.Count == 0)
+                            {
+                                <tr><td colspan="3" class="text-center text-secondary py-4">No payments in this period.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var row in Model.PaymentStatuses)
+                                {
+                                    <tr>
+                                        <td><span class="badge @(row.Status == "paid" ? "text-bg-success" : "text-bg-secondary")">@Model.DisplayStatus(row.Status)</span></td>
+                                        <td>@row.Count</td>
+                                        <td class="text-end">₱@row.Amount.ToString("N2")</td>
+                                    </tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white"><h3 class="h5 mb-0">Payments by Method</h3></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light"><tr><th>Method</th><th>Payments</th><th class="text-end">Amount</th></tr></thead>
+                            <tbody>
+                            @if (Model.PaymentMethods.Count == 0)
+                            {
+                                <tr><td colspan="3" class="text-center text-secondary py-4">No payments in this period.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var row in Model.PaymentMethods)
+                                {
+                                    <tr><td>@row.Method</td><td>@row.Count</td><td class="text-end">₱@row.Amount.ToString("N2")</td></tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white">
+                <h3 class="h5 mb-0">Payment Transactions</h3>
+                @if (Model.ShowingLatestPayments)
+                {
+                    <div class="small text-secondary mt-1">Showing the latest 100 of @Model.PaymentCount.ToString("N0") matching transactions.</div>
+                }
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light"><tr><th>ID</th><th>Member / Plan</th><th>Payment Date</th><th>Method</th><th>Status</th><th class="text-end">Amount</th></tr></thead>
+                    <tbody>
+                    @if (Model.Payments.Count == 0)
+                    {
+                        <tr><td colspan="6" class="text-center text-secondary py-4">No payment transactions were found for this period.</td></tr>
+                    }
+                    else
+                    {
+                        @foreach (var payment in Model.Payments)
+                        {
+                            <tr>
+                                <td>@payment.PaymentId</td>
+                                <td><span class="fw-semibold">@payment.Member.FirstName @payment.Member.LastName</span><div class="small text-secondary">@payment.Plan.PlanName</div></td>
+                                <td>@payment.PaymentDate.ToString("MMM d, yyyy")</td>
+                                <td>@payment.PaymentMethod</td>
+                                <td><span class="badge @(payment.Status == "paid" ? "text-bg-success" : "text-bg-secondary")">@Model.DisplayStatus(payment.Status)</span></td>
+                                <td class="text-end">₱@payment.Amount.ToString("N2")</td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5" aria-labelledby="attendance-report-heading">
+        <h2 id="attendance-report-heading" class="h4 mb-3">Attendance Report</h2>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-4"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Attendance records</div><div class="display-6 fw-semibold">@Model.AttendanceCount</div></div></div></div>
+            <div class="col-6 col-lg-4"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Checked in</div><div class="display-6 fw-semibold">@Model.CheckedInCount</div><div class="small text-secondary">Open records</div></div></div></div>
+            <div class="col-6 col-lg-4"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Checked out</div><div class="display-6 fw-semibold">@Model.CheckedOutCount</div></div></div></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white"><h3 class="h5 mb-0">Attendance by Date</h3></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light"><tr><th>Date</th><th>Records</th><th>Checked in</th><th>Checked out</th></tr></thead>
+                            <tbody>
+                            @if (Model.AttendanceByDate.Count == 0)
+                            {
+                                <tr><td colspan="4" class="text-center text-secondary py-4">No attendance records in this period.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var row in Model.AttendanceByDate)
+                                {
+                                    <tr><td>@row.Date.ToString("MMM d, yyyy")</td><td>@row.RecordCount</td><td>@row.CheckedInCount</td><td>@row.CheckedOutCount</td></tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white"><h3 class="h5 mb-0">Attendance by Member</h3><div class="small text-secondary">Top 10 members by number of records</div></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light"><tr><th>Member</th><th>Email</th><th class="text-end">Records</th></tr></thead>
+                            <tbody>
+                            @if (Model.AttendanceByMember.Count == 0)
+                            {
+                                <tr><td colspan="3" class="text-center text-secondary py-4">No attendance records in this period.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var row in Model.AttendanceByMember)
+                                {
+                                    <tr><td>@row.FullName</td><td>@row.Email</td><td class="text-end">@row.RecordCount</td></tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5" aria-labelledby="member-report-heading">
+        <h2 id="member-report-heading" class="h4 mb-3">Member Report</h2>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Registered members</div><div class="display-6 fw-semibold">@Model.TotalMembers</div></div></div></div>
+            <div class="col-6 col-lg-3"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">New in period</div><div class="display-6 fw-semibold">@Model.NewMembers</div></div></div></div>
+            <div class="col-6 col-lg-3"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Active</div><div class="display-6 fw-semibold">@Model.ActiveMembers</div></div></div></div>
+            <div class="col-6 col-lg-3"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Inactive</div><div class="display-6 fw-semibold">@Model.InactiveMembers</div></div></div></div>
+        </div>
+        <div class="card">
+            <div class="card-header bg-white"><h3 class="h5 mb-0">New Registrations by Date</h3></div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light"><tr><th>Date</th><th class="text-end">New members</th></tr></thead>
+                    <tbody>
+                    @if (Model.NewMembersByDate.Count == 0)
+                    {
+                        <tr><td colspan="2" class="text-center text-secondary py-4">No new registrations in this period.</td></tr>
+                    }
+                    else
+                    {
+                        @foreach (var row in Model.NewMembersByDate)
+                        {
+                            <tr><td>@row.Date.ToString("MMM d, yyyy")</td><td class="text-end">@row.MemberCount</td></tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-4" aria-labelledby="plan-report-heading">
+        <h2 id="plan-report-heading" class="h4 mb-3">Membership Plan Report</h2>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-4"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">All plans</div><div class="display-6 fw-semibold">@Model.TotalPlans</div></div></div></div>
+            <div class="col-6 col-lg-4"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Active plans</div><div class="display-6 fw-semibold">@Model.ActivePlans</div></div></div></div>
+            <div class="col-6 col-lg-4"><div class="card dashboard-stat-card h-100"><div class="card-body"><div class="text-secondary small">Inactive plans</div><div class="display-6 fw-semibold">@Model.InactivePlans</div></div></div></div>
+        </div>
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light"><tr><th>Plan</th><th>Status</th><th>Members</th><th>Share of members</th></tr></thead>
+                    <tbody>
+                    @if (Model.PlanDistribution.Count == 0)
+                    {
+                        <tr><td colspan="4" class="text-center text-secondary py-4">No membership plans have been created yet.</td></tr>
+                    }
+                    else
+                    {
+                        @foreach (var plan in Model.PlanDistribution)
+                        {
+                            <tr>
+                                <td>@plan.PlanName</td>
+                                <td><span class="badge @(plan.IsActive ? "text-bg-success" : "text-bg-secondary")">@(plan.IsActive ? "Active" : "Inactive")</span></td>
+                                <td>@plan.MemberCount</td>
+                                <td>
+                                    @plan.Percentage.ToString("0.#")%
+                                    <div class="progress mt-1" role="progressbar" aria-label="@($"{plan.PlanName} member share")" aria-valuenow="@plan.Percentage.ToString("0.#")" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar" style="width: @plan.Percentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+}

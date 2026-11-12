@@ -1,0 +1,42 @@
+@page "{id:int}"
+@model GymManagementSystem.Pages.Attendance.DeleteModel
+@{
+    ViewData["Title"] = "Delete attendance record";
+}
+
+<div class="mb-4">
+    <a class="text-decoration-none" asp-page="Index">&larr; Back to attendance</a>
+    <h1 class="h2 mt-2 mb-1">Delete attendance record</h1>
+    <p class="text-secondary mb-0">Review the record before confirming.</p>
+</div>
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <div class="alert alert-warning" role="alert">
+            This permanently removes attendance record #@Model.Record!.AttendanceId.
+        </div>
+        <dl class="row">
+            <dt class="col-sm-3">Member</dt>
+            <dd class="col-sm-9">@Model.Record.Member.FirstName @Model.Record.Member.LastName</dd>
+            <dt class="col-sm-3">Date</dt>
+            <dd class="col-sm-9">@Model.Record.AttendanceDate.ToString("yyyy-MM-dd")</dd>
+            <dt class="col-sm-3">Check-in / check-out</dt>
+            <dd class="col-sm-9">@Model.Record.CheckInTime / @(Model.Record.CheckOutTime ?? "Not checked out")</dd>
+        </dl>
+        <form method="post">
+            <div class="form-check mb-3">
+                <input asp-for="ConfirmDelete" class="form-check-input" />
+                <label asp-for="ConfirmDelete" class="form-check-label">I understand this attendance record will be permanently deleted.</label>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-danger">Delete attendance record</button>
+                <a class="btn btn-outline-secondary" asp-page="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

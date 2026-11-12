@@ -1,0 +1,33 @@
+@page
+@model GymManagementSystem.Pages.Payments.CreateModel
+@{
+    ViewData["Title"] = "Record payment";
+}
+
+<div class="mb-4">
+    <a class="text-decoration-none" asp-page="Index">&larr; Back to payments</a>
+    <h1 class="h2 mt-2 mb-1">Record a payment</h1>
+    <p class="text-secondary mb-0">Enter the payment details. Member and plan records are not changed.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        @if (Model.Members.Count == 0 || Model.Plans.Count == 0)
+        {
+            <div class="alert alert-warning" role="alert">
+                A member and a membership plan must exist before a payment can be recorded.
+            </div>
+        }
+        <form method="post">
+            <partial name="_PaymentForm" model="Model" />
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary" disabled="@(Model.Members.Count == 0 || Model.Plans.Count == 0)">Save payment</button>
+                <a class="btn btn-outline-secondary" asp-page="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

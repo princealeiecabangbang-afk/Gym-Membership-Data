@@ -1,0 +1,27 @@
+@page
+@model GymManagementSystem.Pages.Members.CreateModel
+@{
+    ViewData["Title"] = "Add member";
+}
+
+<div class="mb-4">
+    <a class="text-decoration-none" asp-page="Index">&larr; Back to members</a>
+    <h1 class="h2 mt-2 mb-1">Add a member</h1>
+    <p class="text-secondary mb-0">Enter the new member's information.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <form method="post">
+            <partial name="_MemberForm" model="Model" />
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary" disabled="@(Model.Plans.Count == 0)">Save member</button>
+                <a class="btn btn-outline-secondary" asp-page="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

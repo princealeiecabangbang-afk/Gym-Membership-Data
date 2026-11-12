@@ -1,0 +1,42 @@
+@page "{id:int}"
+@model GymManagementSystem.Pages.Attendance.DetailsModel
+@{
+    ViewData["Title"] = "Attendance details";
+}
+
+<div class="mb-4">
+    <a class="text-decoration-none" asp-page="Index">&larr; Back to attendance</a>
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-2">
+        <div>
+            <h1 class="h2 mb-1">Attendance record #@Model.Record!.AttendanceId</h1>
+            <p class="text-secondary mb-0">Check-in and check-out details</p>
+        </div>
+        @if (Model.Record.CheckOutTime is null)
+        {
+            <span class="badge text-bg-warning fs-6">Checked in</span>
+        }
+        else
+        {
+            <span class="badge text-bg-success fs-6">Checked out</span>
+        }
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <dl class="row card-body mb-0">
+        <dt class="col-sm-3">Member</dt>
+        <dd class="col-sm-9">@Model.Record.Member.FirstName @Model.Record.Member.LastName (ID @Model.Record.Member.MemberId)</dd>
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Record.Member.Email</dd>
+        <dt class="col-sm-3">Phone</dt>
+        <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Record.Member.Phone) ? "Not provided" : Model.Record.Member.Phone)</dd>
+        <dt class="col-sm-3">Attendance date</dt>
+        <dd class="col-sm-9">@Model.Record.AttendanceDate.ToString("yyyy-MM-dd")</dd>
+        <dt class="col-sm-3">Check-in time</dt>
+        <dd class="col-sm-9">@Model.Record.CheckInTime</dd>
+        <dt class="col-sm-3">Check-out time</dt>
+        <dd class="col-sm-9">@(Model.Record.CheckOutTime ?? "Not checked out yet")</dd>
+        <dt class="col-sm-3">Notes</dt>
+        <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Record.Notes) ? "No notes" : Model.Record.Notes)</dd>
+    </dl>
+</div>

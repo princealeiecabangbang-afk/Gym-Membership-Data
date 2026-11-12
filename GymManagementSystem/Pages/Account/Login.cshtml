@@ -1,0 +1,51 @@
+@page
+@model GymManagementSystem.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Administrator Login";
+    Layout = "_AuthLayout";
+}
+
+<main class="auth-page">
+    <div class="auth-content">
+        <section class="card auth-card border-0" aria-labelledby="login-heading">
+            <div class="card-body p-4 p-sm-5">
+                <header class="text-center mb-4">
+                    <div class="login-brand-mark mx-auto mb-3" aria-hidden="true">MM</div>
+                    <p class="text-primary text-uppercase fw-semibold small mb-2">Muscle Memory</p>
+                    <h1 id="login-heading" class="h2 fw-bold mb-2">Welcome Back to Muscle Memory</h1>
+                    <p class="text-secondary mb-0">Sign in to manage your gym.</p>
+                </header>
+
+                @if (Model.ConfigurationError is not null)
+                {
+                    <div class="alert alert-warning" role="alert" aria-live="polite">@Model.ConfigurationError</div>
+                }
+                @if (Model.LoginError is not null)
+                {
+                    <div class="alert alert-danger" role="alert" aria-live="assertive">@Model.LoginError</div>
+                }
+
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Username" class="form-label fw-medium">Username</label>
+                        <input asp-for="Input.Username" class="form-control form-control-lg" autocomplete="username" autocapitalize="none" spellcheck="false" autofocus />
+                        <span asp-validation-for="Input.Username" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="Input.Password" class="form-label fw-medium">Password</label>
+                        <input asp-for="Input.Password" class="form-control form-control-lg" autocomplete="current-password" />
+                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Sign In</button>
+                </form>
+            </div>
+        </section>
+        <p class="auth-footer text-center small text-secondary mb-0">Muscle Memory</p>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

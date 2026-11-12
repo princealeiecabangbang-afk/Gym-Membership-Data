@@ -1,0 +1,43 @@
+@page "{id:int}"
+@model GymManagementSystem.Pages.Payments.DeleteModel
+@{
+    ViewData["Title"] = "Delete payment";
+}
+
+<div class="mb-4">
+    <a class="text-decoration-none" asp-page="Index">&larr; Back to payments</a>
+    <h1 class="h2 mt-2 mb-1">Delete payment</h1>
+    <p class="text-secondary mb-0">Review this payment before confirming deletion.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        @if (TempData["ErrorMessage"] is string errorMessage)
+        {
+            <div class="alert alert-danger" role="alert">@errorMessage</div>
+        }
+        <div class="alert alert-warning" role="alert">
+            This action cannot be undone. Confirm that you want to delete payment #@Model.Payment!.PaymentId.
+        </div>
+        <dl class="row">
+            <dt class="col-sm-3">Member</dt>
+            <dd class="col-sm-9">@Model.Payment.Member.FirstName @Model.Payment.Member.LastName</dd>
+            <dt class="col-sm-3">Plan</dt>
+            <dd class="col-sm-9">@Model.Payment.Plan.PlanName</dd>
+            <dt class="col-sm-3">Amount and date</dt>
+            <dd class="col-sm-9">@Model.Payment.Amount.ToString("0.00") · @Model.Payment.PaymentDate.ToString("yyyy-MM-dd")</dd>
+            <dt class="col-sm-3">Receipt</dt>
+            <dd class="col-sm-9">@(Model.Payment.ReceiptNumber ?? "Not provided")</dd>
+        </dl>
+        <div class="d-flex gap-2">
+            <form method="post">
+                <div class="form-check mb-3">
+                    <input asp-for="ConfirmDelete" class="form-check-input" />
+                    <label asp-for="ConfirmDelete" class="form-check-label">I understand this payment will be permanently deleted.</label>
+                </div>
+                <button type="submit" class="btn btn-danger">Confirm delete</button>
+            </form>
+            <a class="btn btn-outline-secondary" asp-page="Index">Cancel</a>
+        </div>
+    </div>
+</div>

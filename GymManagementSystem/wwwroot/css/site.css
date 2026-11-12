@@ -1,0 +1,82 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.auth-body {
+  min-height: 100vh;
+  margin: 0;
+  background: #f3f6fb;
+}
+
+.auth-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-content {
+  width: min(100%, 28rem);
+}
+
+.auth-card {
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2.5rem rgba(33, 37, 41, .1);
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+}
+
+.dashboard-stat-card {
+  border: 0;
+  border-top: 3px solid var(--bs-primary);
+  box-shadow: 0 .125rem .5rem rgba(0, 0, 0, .08);
+}
+
+.login-brand-mark {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border-radius: 1.1rem;
+  background: var(--bs-primary);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  box-shadow: 0 .4rem 1rem rgba(13, 110, 253, .25);
+}
+
+.auth-card .form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}

@@ -1,0 +1,27 @@
+@page "{id:int}"
+@model GymManagementSystem.Pages.Plans.EditModel
+@{
+    ViewData["Title"] = "Edit membership plan";
+}
+
+<div class="mb-4">
+    <a class="text-decoration-none" asp-page="Index">&larr; Back to plans</a>
+    <h1 class="h2 mt-2 mb-1">Edit membership plan</h1>
+    <p class="text-secondary mb-0">Update the plan details below.</p>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <form method="post">
+            <partial name="_PlanForm" for="Input" />
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a class="btn btn-outline-secondary" asp-page="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

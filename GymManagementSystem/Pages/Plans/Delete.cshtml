@@ -1,0 +1,50 @@
+@page "{id:int}"
+@model GymManagementSystem.Pages.Plans.DeleteModel
+@{
+    ViewData["Title"] = "Delete membership plan";
+}
+
+<div class="mb-4">
+    <a class="text-decoration-none" asp-page="Index">&larr; Back to plans</a>
+    <h1 class="h2 mt-2 mb-1">Delete membership plan</h1>
+    <p class="text-secondary mb-0">Review the plan before confirming.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        @if (TempData["ErrorMessage"] is string errorMessage)
+        {
+            <div class="alert alert-danger" role="alert">@errorMessage</div>
+        }
+
+        <h2 class="h5">@Model.Plan!.PlanName</h2>
+        <p class="text-secondary">This action cannot be undone.</p>
+
+        @if (Model.MemberCount > 0 || Model.PaymentCount > 0)
+        {
+            <div class="alert alert-warning" role="alert">
+                This plan cannot be deleted because it is referenced by
+                @Model.MemberCount member(s) and @Model.PaymentCount payment(s).
+                You can deactivate it instead.
+            </div>
+        }
+        else
+        {
+            <p>There are no members or payments linked to this plan. Are you sure you want to delete it?</p>
+        }
+
+        <div class="d-flex gap-2">
+            @if (Model.MemberCount == 0 && Model.PaymentCount == 0)
+            {
+                <form method="post">
+                    <div class="form-check mb-3">
+                        <input asp-for="ConfirmDelete" class="form-check-input" />
+                        <label asp-for="ConfirmDelete" class="form-check-label">I understand this membership plan will be permanently deleted.</label>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Delete plan</button>
+                </form>
+            }
+            <a class="btn btn-outline-secondary" asp-page="Index">Cancel</a>
+        </div>
+    </div>
+</div>
