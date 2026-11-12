@@ -2,6 +2,7 @@ using GymManagementSystem.Data;
 using GymManagementSystem.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,35 @@ if (args.Contains("--generate-admin-password-hash", StringComparer.Ordinal))
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuredDatabasePath = Environment.GetEnvironmentVariable("GYM_DATABASE_PATH");
+var databasePath = string.IsNullOrWhiteSpace(configuredDatabasePath)
+    ? builder.Environment.IsProduction()
+        ? Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "private", "gym.db"))
+        : Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "gym.db"))
+    : Path.GetFullPath(Path.IsPathRooted(configuredDatabasePath)
+        ? configuredDatabasePath
+        : Path.Combine(builder.Environment.ContentRootPath, configuredDatabasePath));
+var databaseDirectory = Path.GetDirectoryName(databasePath)
+    ?? throw new InvalidOperationException("The configured SQLite database path has no parent directory.");
+Directory.CreateDirectory(databaseDirectory);
+
 var configuredConnectionString = builder.Configuration.GetConnectionString("GymDatabase")
     ?? throw new InvalidOperationException("The GymDatabase connection string is missing.");
 var connectionString = new SqliteConnectionStringBuilder(configuredConnectionString)
 {
-    DataSource = Path.Combine(builder.Environment.ContentRootPath, "gym.db"),
+    DataSource = databasePath,
     ForeignKeys = true
 }.ToString();
+
+if (builder.Environment.IsProduction())
+{
+    var keyDirectory = Path.GetFullPath(
+        Path.Combine(builder.Environment.ContentRootPath, "..", "private", "keys"));
+    Directory.CreateDirectory(keyDirectory);
+    builder.Services.AddDataProtection()
+        .SetApplicationName("MuscleMemory")
+        .PersistKeysToFileSystem(new DirectoryInfo(keyDirectory));
+}
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddRazorPages();

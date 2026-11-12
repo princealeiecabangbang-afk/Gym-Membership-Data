@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Content Include="../Database" Link="Database.sql" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup>
